@@ -4,7 +4,7 @@
   "description": "Levin Bot",
   "main": "src/main.js",
   "scripts": {
-    "start":"ts-node main.ts"
+    "start": "ts-node main.ts"
   },
   "author": "",
   "license": "ISC",
@@ -14,9 +14,7 @@
     "discord.js": "^12.0.2",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "ts-node": "^8.7.0"
-  },
-  "devDependencies": {
+    "ts-node": "^8.7.0",
     "typescript": "^3.8.3"
   }
 }
