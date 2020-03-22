@@ -1,0 +1,23 @@
+{
+  "name": "levin",
+  "version": "1.0.0",
+  "description": "Levin Bot",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node ./src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.9.2",
+    "discord.js": "^12.0.2",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "ts-node": "^8.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
