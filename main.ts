@@ -7,7 +7,7 @@ async function main() {
     console.log('Levin needs a bot token to start, get one here: https://discordapp.com/developers/applications')
   } else {
     try {
-      const levin = await Levin({token});
+      await Levin({token});
       console.log(`Bot server has started!`);
     } catch(e) {
       console.error('Cannot start Levin, error:', e);

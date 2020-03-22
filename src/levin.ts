@@ -2,6 +2,7 @@ import Discord from 'discord.js';
 import moment from 'moment';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
+import sum from 'lodash/sum';
 
 type GuildLevel = {
   name: string,
@@ -9,13 +10,13 @@ type GuildLevel = {
   unitsToUpgrade: number
 };
 
-// const UpgradeUnit: 'minutes' | 'days' | 'months' = 'minutes';
+type UpgradeUnit = 'minutes' | 'days' | 'months';
 
 const UserLevels: GuildLevel[] = [
   {
     name: 'NVL1',
     value: 100,
-    unitsToUpgrade: 5,
+    unitsToUpgrade: 0,
   },
   {
     name: 'NVL2',
@@ -26,9 +27,14 @@ const UserLevels: GuildLevel[] = [
     name: 'NVL3',
     value: 300,
     unitsToUpgrade: 5
-  }
+  },
+  {
+    name: 'NVL4',
+    value: 400,
+    unitsToUpgrade: 5
+  },
 ];
-
+const UPGRADE_UNIT: UpgradeUnit = 'minutes';
 const USER_LEVEL_ROLE_NAMES = UserLevels.map(r => r.name);
 const FIRST_LEVEL = minBy(UserLevels, (level => level.value));
 
@@ -50,12 +56,6 @@ async function Levin({token}: {token: string}) {
       return `"${g.name}" (ID: ${g.id})`;
     }).join(', ');
     console.log(`Connected to Discords: [${guildNames}]`)
-  });
-
-  client.on('message', msg => {
-    if (msg.content === 'ping' && msg.reply) {
-      msg.reply('Pong');
-    }
   });
 
   client.on('guildUpdate', (oldGuild, newGuild) => {
@@ -82,34 +82,46 @@ async function Levin({token}: {token: string}) {
 
     if (guildLevelRoles.size !== USER_LEVEL_ROLE_NAMES.length) {
       console.error(`The list of roles in Discord "${member.guild.name}" (ID: ${member.guild.id}) must match with [${USER_LEVEL_ROLE_NAMES.join(', ')}]. Make sure all of these roles exist.`);
+      return;
     }
 
     if (memberLevelRoles.size === 0) {
       const lowestLevelRole = guildLevelRoles.find(r => r.name === FIRST_LEVEL.name) as Discord.Role;
       await member.roles.add(lowestLevelRole);
       console.log(`User ${member.displayName} (ID: ${member.id}) had none of the roles "${USER_LEVEL_ROLE_NAMES.join(', ')}" set. Role "${FIRST_LEVEL.name}" was set to this user.`);
-    } else {
-      const highestCurrentRole = maxBy(memberLevelRoles.array(), (memberRole) => {
-        return (
-          UserLevels.find((level) => level.name === memberRole.name) as GuildLevel
-        ).value;
-      }) as Discord.Role;
-      const highestCurrentRoleValue = (UserLevels.find((level) => level.name === highestCurrentRole.name) as GuildLevel).value;
-      const nextLevel = UserLevels.find((level) => level.value > highestCurrentRoleValue);
-      if (!nextLevel) {
-        // User is already on the highest level.
-        console.log(`User "${member.displayName}" (ID: ${member.id}) has the maximum level. Doing nothing with this user.`);
-      } else {
-        const nextLevelRole = guildLevelRoles.find(r => r.name === nextLevel.name) as Discord.Role;
-        await member.roles.add(nextLevelRole);
-        await member.roles.remove(memberLevelRoles);
-        console.log(`User "${member.displayName}" (ID: ${member.id}) has been upgraded to "${nextLevelRole.name}". Removed role(s) [${memberLevelRoles.array().map(r => r.name).join(', ')}].`);
-      }
+      return;
     }
-    // const now = moment();
-    // const joinedTimestamp = moment(member.joinedTimestamp);
 
-    // console.log(`User ${member.displayName} is online. Joined ${member.joinedAt} (${member.joinedTimestamp})`);
+    const highestCurrentRole = maxBy(memberLevelRoles.array(), (memberRole) => {
+      return (
+        UserLevels.find((level) => level.name === memberRole.name) as GuildLevel
+      ).value;
+    }) as Discord.Role;
+    const highestCurrentLevel = UserLevels.find((level) => level.name === highestCurrentRole.name) as GuildLevel;
+    const nextLevel = UserLevels.find((level) => level.value > highestCurrentLevel.value);
+
+    if (!nextLevel) {
+      // User is already on the highest level.
+      console.log(`User "${member.displayName}" (ID: ${member.id}) has the maximum level. Doing nothing with this user.`);
+      return;
+    }
+
+    const nextLevelRole = guildLevelRoles.find(r => r.name === nextLevel.name) as Discord.Role;
+    const now = moment();
+    const joinedTimestamp = moment(member.joinedTimestamp);
+    const unitsNeededToUpgrade = sum(UserLevels.filter(uL => uL.value <= nextLevel.value).map(uL => uL.unitsToUpgrade));
+    console.log(`User "${member.displayName}" (ID: ${member.id}) needs at least "${unitsNeededToUpgrade} ${UPGRADE_UNIT}" in the guild to upgrade to ${nextLevel.name}.`);
+    if (now.diff(joinedTimestamp, UPGRADE_UNIT) >= unitsNeededToUpgrade) {
+      console.log(`User "${member.displayName}" (ID: ${member.id}) can be upgraded!`);
+      await member.roles.add(nextLevelRole);
+      await member.roles.remove(memberLevelRoles);
+      console.log(`User "${member.displayName}" (ID: ${member.id}) has been upgraded to "${nextLevelRole.name}". Removed role(s) [${memberLevelRoles.array().map(r => r.name).join(', ')}].`);
+      await member.send(`Por tu permanencia en ${member.guild.name} fuiste ascendido a ${nextLevelRole.name}. Felicitaciones! 🎉`);
+      return;
+    } else {
+      console.log(`User "${member.displayName}" (ID: ${member.id}) does not have enough time in the server.`);
+      return;
+    }
   });
 
   await client.login(token);

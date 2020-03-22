@@ -4,8 +4,7 @@
   "description": "Levin Bot",
   "main": "src/main.js",
   "scripts": {
-    "start": "node ./src/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start":"ts-node main.ts"
   },
   "author": "",
   "license": "ISC",
