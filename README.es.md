@@ -43,6 +43,35 @@ LEVIN_TOKEN=<bot-token> npm start
 
 Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin se conectó a Discord.
 
+## Configuración de la sala de Discord
+En la Configuración de la sala, es necesario asegurarse de que el bot tenga la mayor autoridad posible en materia de roles. Y sobre todo, es importante que el bot este por encima de los roles que pretende asignar.
+
+Por ejemplo, esta configuración no funcionará, dado que `[Levin Bot]` no va a poder remover o asignar los roles NVL1, NVL2, NVL3.
+
+```
+NVL1
+NVL2
+NVL3
+[Levin Bot]
+Coffee Maker
+Snacks Provider
+Gamers
+Developers
+```
+
+Es necesario que la configuración luzca similar a esto:
+
+```
+[Levin Bot]
+NVL1
+NVL2
+NVL3
+Coffee Maker
+Snacks Provider
+Gamers
+Developers
+```
+
 ## Deployment
 Cualquier servidor que pueda ejecutar aplicaciones NodeJS puede correr perfectamente Levin. Con el mismo comando que se utiliza localmente, ya que la app no requiere ningun paso de building.
 
@@ -55,5 +84,5 @@ Este repositorio en particular ofrece soporte para deployar en Heroku. Para util
 * DiscordJS API: https://discord.js.org/#/docs/main/stable/general/welcome
 * Guía General de TypeScript: https://www.typescriptlang.org/docs/home.html
 * Referencia de comandos CLI de Heroku: https://devcenter.heroku.com/articles/heroku-cli-commands
-
+* Dyno Management en Heroku: https://devcenter.heroku.com/articles/dynos#cli-commands-for-dyno-management
 

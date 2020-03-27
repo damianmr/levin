@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node main.ts"
   },
-  "author": "",
+  "author": "Damian M.R. (@damianmr)",
   "license": "ISC",
   "dependencies": {
     "@types/lodash": "^4.14.149",
