@@ -2,7 +2,7 @@
 
 Levin es un bot que permite establecer un sistema de niveles para los usuarios utilizando roles de Discord. Los usuarios suben de nivel en base al tiempo de antiguedad que tengan en el servidor.
 
-## Prerequesitos
+## Prerrequesitos
 
 Antes de comenzar a utilizar este proyecto, es necesario crear una nueva aplicacion en Discord, y agregarle a un bot a la misma. Esto se hace desde https://discordapp.com/developers/applications
 
