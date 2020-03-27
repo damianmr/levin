@@ -3,6 +3,7 @@ import moment from 'moment';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import sum from 'lodash/sum';
+import logger from './logger';
 
 type GuildLevel = {
   name: string,
@@ -21,18 +22,13 @@ const GuildLevels: GuildLevel[] = [
   {
     name: 'NVL2',
     value: 200,
-    unitsToUpgrade: 5
+    unitsToUpgrade: 10
   },
   {
     name: 'NVL3',
     value: 300,
-    unitsToUpgrade: 5
-  },
-  {
-    name: 'NVL4',
-    value: 400,
-    unitsToUpgrade: 5
-  },
+    unitsToUpgrade: 10
+  }
 ];
 const UPGRADE_UNIT: UpgradeUnit = 'minutes';
 const USER_LEVEL_ROLE_NAMES = GuildLevels.map(r => r.name);
@@ -50,23 +46,32 @@ async function Levin({token}: {token: string}) {
     return;
   }
 
+  client.on('message', message => {
+    if (message.content === 'ping') {
+      message.channel?.send('Pong!');
+    }
+  });
+
   client.on('ready', () => {
-    console.log(`Logged in as ${client.user?.tag}!`);
+    const {log} = logger();
+    log(`Logged in as ${client.user?.tag}!`);
     const guildNames = client.guilds.cache.map((g) => {
       return `"${g.name}" (ID: ${g.id})`;
     }).join(', ');
-    console.log(`Connected to Discords: [${guildNames}]`)
+    log(`Connected to Discords: [${guildNames}]`)
   });
 
   client.on('guildUpdate', (oldGuild, newGuild) => {
+    const {log} = logger();
     if (oldGuild.available === false && newGuild.available === true) {
-      console.log(`Discord "${newGuild.name}" (ID: ${newGuild.id}) is now CONNECTED.`);
+      log(`Discord "${newGuild.name}" (ID: ${newGuild.id}) is now CONNECTED.`);
     } else if (oldGuild.available === true && newGuild.available === false) {
-      console.log(`Discord "${newGuild.name}" (ID: ${newGuild.id}) is now DISCONNECTED.`);
+      log(`Discord "${newGuild.name}" (ID: ${newGuild.id}) is now DISCONNECTED.`);
     }
   });
 
   client.on('presenceUpdate', async (_oldPresence, newPresence) => {
+    const {log, error} = logger();
     if (newPresence.status === 'offline' || !newPresence.member) {
       return;
     }
@@ -74,7 +79,7 @@ async function Levin({token}: {token: string}) {
     const member = newPresence.member;
 
     if (!member.joinedTimestamp) {
-      console.error(`User ${member.displayName} (id: ${member.id}) does not have joinedTimestamp. Weird.`);
+      error(`User ${member.displayName} (id: ${member.id}) does not have joinedTimestamp. Weird.`);
       return;
     }
 
@@ -82,7 +87,7 @@ async function Levin({token}: {token: string}) {
     const memberLevelRoles = member.roles.cache.filter(role => USER_LEVEL_ROLE_NAMES.includes(role.name));
 
     if (guildLevelRoles.size !== USER_LEVEL_ROLE_NAMES.length) {
-      console.error(`The list of roles in Discord "${member.guild.name}" (ID: ${member.guild.id}) must match with [${USER_LEVEL_ROLE_NAMES.join(', ')}]. Make sure all of these roles exist.`);
+      error(`The list of roles in Discord "${member.guild.name}" (ID: ${member.guild.id}) must match with [${USER_LEVEL_ROLE_NAMES.join(', ')}]. Make sure all of these roles exist.`);
       return;
     }
 
@@ -90,7 +95,7 @@ async function Levin({token}: {token: string}) {
     if (memberLevelRoles.size === 0) {
       const lowestLevelRole = guildLevelRoles.find(r => r.name === FIRST_LEVEL.name) as Discord.Role;
       await member.roles.add(lowestLevelRole);
-      console.log(`User ${member.displayName} (ID: ${member.id}) had none of the roles "${USER_LEVEL_ROLE_NAMES.join(', ')}" set. Role "${FIRST_LEVEL.name}" was set to this user.`);
+      log(`User ${member.displayName} (ID: ${member.id}) had none of the roles "${USER_LEVEL_ROLE_NAMES.join(', ')}" set. Role "${FIRST_LEVEL.name}" was set to this user.`);
       return;
     }
 
@@ -104,7 +109,7 @@ async function Levin({token}: {token: string}) {
 
     if (!nextLevel) {
       // User is already on the highest level.
-      console.log(`User "${member.displayName}" (ID: ${member.id}) has the maximum level. Doing nothing with this user.`);
+      log(`User "${member.displayName}" (ID: ${member.id}) has the maximum level. Doing nothing with this user.`);
       return;
     }
 
@@ -112,23 +117,23 @@ async function Levin({token}: {token: string}) {
     const now = moment();
     const joinedTimestamp = moment(member.joinedTimestamp);
     const unitsNeededToUpgrade = sum(GuildLevels.filter(uL => uL.value <= nextLevel.value).map(uL => uL.unitsToUpgrade));
-    console.log(`User "${member.displayName}" (ID: ${member.id}) needs at least "${unitsNeededToUpgrade} ${UPGRADE_UNIT}" in the guild to upgrade to ${nextLevel.name}.`);
+    log(`User "${member.displayName}" (ID: ${member.id}) needs at least "${unitsNeededToUpgrade} ${UPGRADE_UNIT}" in the guild to upgrade to ${nextLevel.name}.`);
     if (now.diff(joinedTimestamp, UPGRADE_UNIT) >= unitsNeededToUpgrade) {
-      console.log(`\tUser "${member.displayName}" (ID: ${member.id}) can be upgraded!`);
+      log(`User "${member.displayName}" (ID: ${member.id}) can be upgraded!`);
       const newMemberRoles = member.roles.cache.clone();
       for (let lowerRole of memberLevelRoles.array()) {
-        console.log(`\tProcessing remotion of ${lowerRole.name} (${lowerRole.id}). Exists? ${newMemberRoles.has(lowerRole.id)}`);
+        log(`Processing remotion of ${lowerRole.name} (${lowerRole.id}). Exists? ${newMemberRoles.has(lowerRole.id)}`);
         newMemberRoles.delete(lowerRole.id);
       }
       newMemberRoles.set(nextLevelRole.id, nextLevelRole);
       const rolesToSetInfo = newMemberRoles.map(r => `"${r.name}" (${r.id})`).join(', ');
-      console.log(`\tRoles to set in member: ${rolesToSetInfo}`);
+      log(`Roles to set in member: ${rolesToSetInfo}`);
       await member.roles.set(newMemberRoles);
-      console.log(`\tUser "${member.displayName}" (ID: ${member.id}) has been upgraded to "${nextLevelRole.name}". Removed role(s) [${memberLevelRoles.array().map(r => r.name).join(', ')}].`);
+      log(`User "${member.displayName}" (ID: ${member.id}) has been upgraded to "${nextLevelRole.name}". Removed role(s) [${memberLevelRoles.array().map(r => r.name).join(', ')}].`);
       await member.send(`Por tu permanencia en ${member.guild.name} fuiste ascendido a ${nextLevelRole.name}. Felicitaciones! 🎉`);
       return;
     } else {
-      console.log(`\tUser "${member.displayName}" (ID: ${member.id}) does not have enough time in the server.`);
+      log(`User "${member.displayName}" (ID: ${member.id}) does not have enough time in the server.`);
       return;
     }
   });
