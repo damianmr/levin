@@ -6,13 +6,13 @@ Levin es un bot que permite establecer un sistema de niveles para los usuarios u
 
 Antes de comenzar a utilizar este proyecto, es necesario crear una nueva aplicacion en Discord, y agregarle a un bot a la misma. Esto se hace desde https://discordapp.com/developers/applications
 
-{gif app creation}
+![Crear una app en Discord](docs/app-create.gif?raw=true "Creando una app en Discord")
 
 Al finalizar la creación de la aplicación, aparecerá un `CLIENT_ID`, con el cual podremos unir el bot a cualquier Discord en el que se lo quiera instalar.
 
 Luego es necesario agregar un bot en esta aplicación. Necesitaremos copiar y guardar, de manera segura, el token del bot. Este token es importantísimo, pues permite al bot conectarse a Discord.
 
-{gif bot creation}
+![Crear un bot en Discord](docs/bot-create.gif?raw=true "Creando un bot en Discord")
 
 Nunca se debe subir el token a ningún archivo del repositorio y además debe permanecer secreto.
 
@@ -33,7 +33,7 @@ El `CLIENT_ID` fue generado durante la creación de la app. El número utilizado
 
 La lista de permisos está disponible en la página de administración del bot:
 
-{img permissions}
+![Permisos en Discord](docs/permissions.jpg?raw=true "Permisos en Discord")
 
 Usando el token generado durante la creación del bot, solo es necesario ejecutar.
 

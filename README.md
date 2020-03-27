@@ -1,2 +1,4 @@
 # Levin Discord Bot
-[SPANISH] README.es.md
+[ESPAÑOL](README.es.md)
+
+## TODO (coming soon)
