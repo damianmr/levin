@@ -11,7 +11,7 @@ type GuildLevel = {
   unitsToUpgrade: number
 };
 
-type UpgradeUnit = 'minutes' | 'days' | 'months';
+type UpgradeUnit = 'minutes' | 'hours' | 'days' | 'months';
 
 const GuildLevels: GuildLevel[] = [
   {
@@ -22,15 +22,15 @@ const GuildLevels: GuildLevel[] = [
   {
     name: 'NVL2',
     value: 200,
-    unitsToUpgrade: 10
+    unitsToUpgrade: 12
   },
   {
     name: 'NVL3',
     value: 300,
-    unitsToUpgrade: 10
+    unitsToUpgrade: 12
   }
 ];
-const UPGRADE_UNIT: UpgradeUnit = 'minutes';
+const UPGRADE_UNIT: UpgradeUnit = 'hours';
 const USER_LEVEL_ROLE_NAMES = GuildLevels.map(r => r.name);
 const FIRST_LEVEL = minBy(GuildLevels, (level => level.value));
 
