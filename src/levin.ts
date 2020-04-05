@@ -34,7 +34,7 @@ const UPGRADE_UNIT: UpgradeUnit = 'months';
 const USER_LEVEL_ROLE_NAMES = GuildLevels.map(r => r.name);
 const FIRST_LEVEL = minBy(GuildLevels, (level => level.value));
 
-async function Levin({token}: {token: string}) {
+async function Levin({token}: {token: string}, flags: {upgradesEnabled: boolean}) {
   if (!FIRST_LEVEL) {
     throw new Error('Object FIRST_LEVEL could not be initialized.');
   }
@@ -123,6 +123,10 @@ async function Levin({token}: {token: string}) {
 
   client.on('presenceUpdate', async (_oldPresence, newPresence) => {
     const {log, error} = logger();
+    if (!flags.upgradesEnabled) {
+      log(`User upgrades are disabled. Event 'presenceUpdate' is ignored. To enable, initialize Levin with UPGRADES_ENABLED=true`);
+      return;
+    }
     if (newPresence.status === 'offline' || !newPresence.member) {
       return;
     }

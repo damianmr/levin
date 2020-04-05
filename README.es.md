@@ -38,7 +38,7 @@ La lista de permisos está disponible en la página de administración del bot:
 Usando el token generado durante la creación del bot, solo es necesario ejecutar.
 
 ```
-LEVIN_TOKEN=<bot-token> npm start
+LEVIN_TOKEN=<bot-token> UPGRADES_ENABLED=true npm start
 ```
 
 Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin se conectó a Discord.
@@ -71,6 +71,10 @@ Snacks Provider
 Gamers
 Developers
 ```
+
+## Flags de configuración
+* `LEVIN_TOKEN=<id>`: Es el token generado durante la creación del bot, sin el mismo es imposible conectarse al servicio de Discord. Es equivalente a un usuario y un password a la vez, no debe subirse a ningún repositorio y se le debe dar el mismo tratamiento que se le da a una contraseña de cualquier otro servicio.
+* `UPGRADES_ENABLED`: Si no está definida (o su valor es algo distinto a `true`) los usuarios no van a subir de nivel. Se puede utilizar para deshabilitar temporalmente esta funcionalidad por cualquier motivo. Por defecto, los usuarios **no suben de nivel**, es necesario habilitar explicitamente esta configuración usando `UPGRADES_ENABLED=true`.
 
 ## Deployment
 Cualquier servidor que pueda ejecutar aplicaciones NodeJS puede correr perfectamente Levin. Con el mismo comando que se utiliza localmente, ya que la app no requiere ningun paso de building.
