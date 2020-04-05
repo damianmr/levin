@@ -5,6 +5,23 @@ import minBy from 'lodash/minBy';
 import sum from 'lodash/sum';
 import logger from './logger';
 
+export type AppFlags = {
+  /**
+   * Enables automatic leveling. If disabled, users won't level up,
+   * no matter how long they've been in the room/guild.
+   */
+  upgradesEnabled: boolean,
+
+  /**
+   * Users who have no level role at all will get the
+   * first level assigned automatically if this feature
+   * is enabled. Otherwise, you'll have to manually
+   * assign a level to your users before Levin can perform
+   * any leveling on them.
+   */
+  automaticFirstLevel: boolean
+};
+
 type GuildLevel = {
   name: string,
   value: number,
@@ -34,7 +51,7 @@ const UPGRADE_UNIT: UpgradeUnit = 'months';
 const USER_LEVEL_ROLE_NAMES = GuildLevels.map(r => r.name);
 const FIRST_LEVEL = minBy(GuildLevels, (level => level.value));
 
-async function Levin({token}: {token: string}, flags: {upgradesEnabled: boolean}) {
+async function Levin({token}: {token: string}, flags: AppFlags) {
   if (!FIRST_LEVEL) {
     throw new Error('Object FIRST_LEVEL could not be initialized.');
   }
@@ -146,12 +163,17 @@ async function Levin({token}: {token: string}, flags: {upgradesEnabled: boolean}
       return;
     }
 
-    // If user has none of the GuildLevels role => assign the lowest one.
     if (memberLevelRoles.size === 0) {
-      const lowestLevelRole = guildLevelRoles.find(r => r.name === FIRST_LEVEL.name) as Discord.Role;
-      await member.roles.add(lowestLevelRole);
-      log(`User ${member.displayName} (ID: ${member.id}) had none of the roles "${USER_LEVEL_ROLE_NAMES.join(', ')}" set. Role "${FIRST_LEVEL.name}" was set to this user.`);
-      return;
+      if (flags.automaticFirstLevel) {
+        // If user has none of the GuildLevels role => assign the lowest one.
+        const lowestLevelRole = guildLevelRoles.find(r => r.name === FIRST_LEVEL.name) as Discord.Role;
+        await member.roles.add(lowestLevelRole);
+        log(`User ${member.displayName} (ID: ${member.id}) had none of the roles "${USER_LEVEL_ROLE_NAMES.join(', ')}" set. Role "${FIRST_LEVEL.name}" was set to this user.`);
+        return;
+      } else {
+        log(`User ${member.displayName} (ID: ${member.id}) has none of "${USER_LEVEL_ROLE_NAMES.join(', ')}" set and "automaticFirstLevel" flag is disabled. Doing nothing with this user.`);
+        return;
+      }
     }
 
     const highestCurrentRole = maxBy(memberLevelRoles.array(), (memberRole) => {

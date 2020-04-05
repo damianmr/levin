@@ -1,8 +1,9 @@
-import Levin from './src/levin';
+import Levin, {AppFlags} from './src/levin';
 
 const token = process.env.LEVIN_TOKEN;
-const flags = {
-  upgradesEnabled: process.env.UPGRADES_ENABLED === 'true'
+const flags: AppFlags = {
+  upgradesEnabled: process.env.UPGRADES_ENABLED === 'true',
+  automaticFirstLevel: process.env.AUTOMATIC_FIRST_LEVEL === 'true'
 }
 
 async function main() {
