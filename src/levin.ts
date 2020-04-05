@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord, { MessageAttachment } from 'discord.js';
 import moment from 'moment';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
@@ -46,9 +46,53 @@ async function Levin({token}: {token: string}) {
     return;
   }
 
-  client.on('message', message => {
+  client.on('message', async message => {
+    if (message.channel?.type !== 'dm' || !message.author) {
+      return;
+    }
+
+    const {log, error, stamp} = logger();
+
     if (message.content === 'ping') {
-      message.channel?.send('Pong!');
+      log(`User "${message.author.username}" (id: ${message.author.id}) pinged.`);
+      await message.author.send('pong!');
+      return;
+    } else if (message.content === 'users' && message.author) {
+      const ownedGuilds = client.guilds.cache.filter(g => {
+        return !!g.members.cache.find(m => {
+          const isThisAuthor = m.id === message.author?.id;
+          const isAdmin = m.hasPermission('ADMINISTRATOR');
+          return isThisAuthor && isAdmin;
+        });
+      });
+      if (ownedGuilds.size === 0) {
+        log(`User "${message.author.username}" (id: ${message.author.id}) requested the list of users in his/her guilds, however, is not an administrator in any.`);
+        return;
+      }
+      await message.author.send('Juntando lista de usuarios y roles...');
+      const userList: string[] = [];
+      ownedGuilds.each(g => {
+        userList.push('=====================================');
+        userList.push(`Guild "${g.name}" (ID: ${g.id})`);
+        userList.push('=====================================');
+        g.members.cache.each(m => {
+          const memberRoles = m.roles.cache.map(r => `${r.name}`).join(',');
+          userList.push(`${m.displayName} (ID: ${m.id}) / Roles: ${memberRoles}`);
+        });
+        userList.push(' ');
+      });
+      const userListAsString = userList.join('\n');
+      console.log('Guilds & Members:\n');
+      log(`User "${message.author.username}" (id: ${message.author.id}) requested the list of users in his/her guilds. Sending an attachment with the following contents:`);
+      log(`\n${userListAsString}`);
+      try {
+        const attachment = new MessageAttachment(Buffer.from(userListAsString, 'utf8'), 'users.txt');
+        await message.author.send('Lista de usuarios en las salas donde sos Administrador:', attachment);
+      } catch (e) {
+        error(`Could not send the attachment! ${e}`);
+        console.error(`${stamp()} exception error:\n`, e);
+        await message.author.send('No se pudo enviar la lista de usuarios. Revisar el log de errores.');
+      }
     }
   });
 
@@ -58,7 +102,14 @@ async function Levin({token}: {token: string}) {
     const guildNames = client.guilds.cache.map((g) => {
       return `"${g.name}" (ID: ${g.id})`;
     }).join(', ');
-    log(`Connected to Discords: [${guildNames}]`)
+    log(`Connected to Discord Rooms: [${guildNames}]` );
+
+    client.guilds.cache.map(async g => {
+      await g.members.fetch();
+      g.members.cache.map(m => {
+        `${m.id} - ${m.nickname} - ${m.displayName}`
+      });
+    });
   });
 
   client.on('guildUpdate', (oldGuild, newGuild) => {
