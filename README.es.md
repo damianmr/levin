@@ -44,7 +44,7 @@ LEVIN_TOKEN=<bot-token> npm start
 Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin se conectó a Discord.
 
 ## Configuración de la sala de Discord
-En la Configuración de la sala, es necesario asegurarse de que el bot tenga la mayor autoridad posible en materia de roles. Y sobre todo, es importante que el bot este por encima de los roles que pretende asignar.
+En la Configuración de la sala, es necesario asegurarse de que el bot tenga la mayor autoridad posible en materia de roles. **Y sobre todo, es importante que el bot este por encima de los roles que pretende asignar.**
 
 Por ejemplo, esta configuración no funcionará, dado que `[Levin Bot]` no va a poder remover o asignar los roles NVL1, NVL2, NVL3.
 

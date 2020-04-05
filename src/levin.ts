@@ -87,7 +87,7 @@ async function Levin({token}: {token: string}) {
       log(`\n${userListAsString}`);
       try {
         const attachment = new MessageAttachment(Buffer.from(userListAsString, 'utf8'), 'users.txt');
-        await message.author.send('Lista de usuarios en las salas donde sos Administrador:', attachment);
+        await message.author.send('Lista de usuarios en las salas que tengo acceso y sos Administrador:', attachment);
       } catch (e) {
         error(`Could not send the attachment! ${e}`);
         console.error(`${stamp()} exception error:\n`, e);
