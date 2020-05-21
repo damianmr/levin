@@ -27,7 +27,7 @@ Es necesario unir el bot a la sala de Discord donde funcionará, para esto, se d
 
 Antes de todo, es necesario que el bot que creamos sea "Público", de otra manera, nadie podrá unirlo a su sala de Discord (los bots privados solo los puede unir su creador y solamente a aquellas salas de las que sea dueño).
 
-![Estableciendo el bot como Público](docs/public-bot.jpg?raw=true "Estableciendo el bot como Público")
+![Estableciendo el bot como Público](docs/public-bot.png?raw=true "Estableciendo el bot como Público")
 
 Luego se debe compartir este link con el administrador de la sala en la cual queremos que el bot se una:
 
@@ -39,7 +39,7 @@ El `CLIENT_ID` fue generado durante la creación de la app. El número utilizado
 
 La lista de permisos está disponible en la página de administración del bot:
 
-![Permisos en Discord](docs/permissions.jpg?raw=true "Permisos en Discord")
+![Permisos en Discord](docs/permissions.png?raw=true "Permisos en Discord")
 
 Usando el token generado durante la creación del bot, solo es necesario ejecutar.
 
@@ -59,6 +59,11 @@ Por ejemplo, esta configuración no funcionará, dado que `[Test Levin App]` no 
 Es necesario que la configuración luzca similar a esto:
 
 ![Configuración correcta de roles](docs/correct-setup.jpg?raw=true "Configuración correcta de roles")
+
+Además, es indispensable que el bot tenga acceso de lectura a la mayor cantidad de canales posibles. No es necesario que tenga acceso en todos, pero la subida de nivel automatica se hace sobre la base de los mensajes que el bot pueda leer de los usuarios. Si un usuario es muy activo sólo en un canal determinado y el bot no puede leer los mensajes allí, eventualmente el bot bajará de nivel a este miembro.
+
+Algo así deberia lucir la configuración de cualquier canal al que se quiera el Levin tenga accesso:
+![Configuración correcta de un canal](docs/channel-config.png?raw=true "Configuración correcta de un canal")
 
 ## Flags de configuración
 * `LEVIN_TOKEN=<id>`: Es el token generado durante la creación del bot, sin el mismo es imposible conectarse al servicio de Discord. Es equivalente a un usuario y un password a la vez, no debe subirse a ningún repositorio y se le debe dar el mismo tratamiento que se le da a una contraseña de cualquier otro servicio.

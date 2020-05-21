@@ -1,7 +1,6 @@
 import genID from './id';
 
-export default function() {
-
+export default function () {
   const logID = genID();
 
   const stamp = `[req#${logID}] `;
@@ -10,11 +9,14 @@ export default function() {
     stamp: () => {
       return stamp;
     },
-    log: (s: string) => {
-      console.log(`${stamp}${s}`);
+    info: (s: string, ...all: any[]) => {
+      console.info(`${stamp}${s}`, all);
     },
-    error: (s: string) => {
-      console.error(`${stamp}${s}`);
+    log: (s: string, ...all: any[]) => {
+      console.log(`${stamp}${s}`, all);
+    },
+    error: (s: string, ...all: any[]) => {
+      console.error(`${stamp}${s}`, all);
     }
-  }
+  };
 }
