@@ -40,9 +40,13 @@ export async function levelUp(member: GuildMember, logger: Logger, flags: AppFla
     `Usuario "${member.displayName}" (id: ${member.id}) fue ascendido a ${rolesInfo.nextLevelRole.name}.`
   );
 
-  await member.send(
-    `Por tu permanencia en ${member.guild.name} fuiste ascendido a ${rolesInfo.nextLevelRole.name}. Felicitaciones! 🎉`
-  );
+  try {
+    await member.send(
+      `Por tu permanencia en ${member.guild.name} fuiste ascendido a ${rolesInfo.nextLevelRole.name}. Felicitaciones! 🎉`
+    );
+  } catch (e) {
+    logger.error(`Cannot send message to ${member.displayName}.`, e);
+  }
 }
 
 export async function levelDown(member: GuildMember, logger: Logger, flags: AppFlags) {
@@ -79,9 +83,13 @@ export async function levelDown(member: GuildMember, logger: Logger, flags: AppF
     `Usuario "${member.displayName}" (id: ${member.id}) fue bajado de nivel a ${rolesInfo.prevLevelRole.name}.`
   );
 
-  await member.send(
-    `Debido a tu inactividad en ${member.guild.name}, bajaste de nivel y ahora sos ${rolesInfo.prevLevelRole.name} 😬`
-  );
+  try {
+    await member.send(
+      `Debido a tu inactividad en ${member.guild.name}, bajaste de nivel y ahora sos ${rolesInfo.prevLevelRole.name} 😬`
+    );
+  } catch (e) {
+    logger.error(`Cannot send message to ${member.displayName}.`, e);
+  }
 }
 
 async function replaceMemberRole(
