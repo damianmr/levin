@@ -27,7 +27,7 @@ Es necesario unir el bot a la sala de Discord donde funcionará, para esto, se d
 
 Antes de todo, es necesario que el bot que creamos sea "Público", de otra manera, nadie podrá unirlo a su sala de Discord (los bots privados solo los puede unir su creador y solamente a aquellas salas de las que sea dueño).
 
-![Estableciendo el bot como Público](docs/public-bot.png?raw=true "Estableciendo el bot como Público")
+![Estableciendo el bot como Público](docs/public-bot.jpg?raw=true "Estableciendo el bot como Público")
 
 Luego se debe compartir este link con el administrador de la sala en la cual queremos que el bot se una:
 
