@@ -81,7 +81,7 @@ export async function saveToFile(path: string, json: Object): Promise<boolean> {
     path,
     sha,
     message: `Updated on ${moment().format('DD-MM-YYYY-HH:mm:ss')}`,
-    content: btoa(JSON.stringify(json)),
+    content: btoa(JSON.stringify(json, null, 2)),
     committer: {
       name: 'Levin 2.0',
       email: 'Levin@Levin.Levin'

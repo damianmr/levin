@@ -1,6 +1,8 @@
 import genID from './id';
 
-export default function () {
+export type Logger = ReturnType<typeof getLoggerInstance>;
+
+export default function getLoggerInstance() {
   const logID = genID();
 
   const stamp = `[req#${logID}] `;

@@ -37,13 +37,26 @@ export type AppFlags = {
    * Discord Bot token.
    */
   botToken: string;
+
+  /**
+   * Number of minutes between database backups
+   */
+  dbBackupInterval: number;
+
+  /**
+   * (Optional) Channel where Levin posts the updates it does on roles to.
+   */
+  updatesChannel: string | null;
 };
+
+const MINUTES_IN_ONE_DAY = 60 * 24;
 
 async function main() {
   const botToken = process.env.LEVIN_TOKEN;
   const env = process.env.ENV;
   const githubToken = process.env.GITHUB_TOKEN;
   const dbRepository = process.env.DB_REPOSITORY;
+  const dbBackupInterval = parseInt(process.env.DB_BACKUP_INTERVAL_IN_MINUTES || '0', 10);
   if (!botToken || isEmpty(botToken)) {
     console.error(
       'Se necesita un bot token para iniciar Levin, se puede obtener uno aquí: https://discordapp.com/developers/applications'
@@ -66,19 +79,36 @@ async function main() {
     return;
   }
 
+  if (!dbBackupInterval || dbBackupInterval <= 0 || dbBackupInterval > MINUTES_IN_ONE_DAY) {
+    console.error(
+      `Falta env var "DB_BACKUP_INTERVAL_IN_MINUTES" que debe ser menor a ${MINUTES_IN_ONE_DAY}`
+    );
+    return;
+  }
+
   const flags: AppFlags = {
     upgradesEnabled: process.env.UPGRADES_ENABLED === 'true',
     automaticFirstLevel: process.env.AUTOMATIC_FIRST_LEVEL === 'true',
     env,
     githubToken,
     dbRepository,
-    botToken
+    botToken,
+    dbBackupInterval,
+    updatesChannel: process.env.UPDATES_CHANNEL || null
   };
 
   try {
     console.log(`Starting with flags: `, flags);
-    await bot(flags);
+    const { shutdown } = await bot(flags);
     console.log(`Bot server has started!`);
+    process.on('SIGTERM', async () => {
+      await shutdown();
+      process.exit(0);
+    });
+    process.on('SIGINT', async () => {
+      await shutdown();
+      process.exit(0);
+    });
   } catch (e) {
     console.error('Cannot start Levin, error:', e);
   }

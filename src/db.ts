@@ -4,9 +4,13 @@ import { AppFlags } from '../main';
 
 export type UserRecord = {
   userKey: string;
+  guildID: string;
+  memberID: string;
   periodStart: number | null;
   lastMessage: number | null;
   lastDowngrade: number | null;
+  userName: string;
+  userId: string;
 };
 
 export const userKey = (member: GuildMember) => `user-${member.guild.id}-${member.id}`;
@@ -16,7 +20,17 @@ export type KeyValueSchema = {
   users: { [id: string]: UserRecord };
 };
 
-export default function instance(flags: AppFlags) {
+export type KeyValueDB = {
+  setUser: (member: GuildMember, record: Partial<UserRecord>) => void;
+  getUser: (member: GuildMember) => UserRecord | null;
+  removeUser: (record: UserRecord) => void;
+  set: (k: keyof KeyValueSchema, v: any) => void;
+  get: (k: keyof KeyValueSchema) => any;
+  save: () => Promise<void>;
+  load: () => Promise<KeyValueSchema>;
+};
+
+export default function instance(flags: AppFlags): KeyValueDB {
   const dbFileName = `${flags.env}-db.json`;
 
   gitHubLogin({
@@ -31,25 +45,41 @@ export default function instance(flags: AppFlags) {
   };
 
   return {
-    setUser: (member: GuildMember, record: Partial<UserRecord>) => {
-      const newRecord = {
+    setUser(this: KeyValueDB, member: GuildMember, updatedRecord: Partial<UserRecord>) {
+      const newRecord: UserRecord = {
         userKey: userKey(member),
+        guildID: member.guild.id,
+        memberID: member.id,
+        userName: member.user.username,
+        userId: member.user.id,
         periodStart: null,
         lastMessage: null,
         lastDowngrade: null
       };
-      keyValueDB.users[userKey(member)] = Object.assign(newRecord, record, {});
+      keyValueDB.users[userKey(member)] = Object.assign(
+        newRecord,
+        this.getUser(member) || {},
+        updatedRecord,
+        {}
+      );
     },
-    getUser: (member: GuildMember) => {
+    getUser(this: KeyValueDB, member: GuildMember) {
       return keyValueDB.users[userKey(member)] || null;
     },
-    set: (k: keyof KeyValueSchema, v: any) => {
+    removeUser(this: KeyValueDB, record: UserRecord) {
+      const member = {
+        guild: { id: record.guildID },
+        id: record.memberID
+      } as GuildMember;
+      delete keyValueDB.users[userKey(member)];
+    },
+    set(this: KeyValueDB, k: keyof KeyValueSchema, v: any) {
       keyValueDB[k] = v;
     },
-    get: (k: keyof KeyValueSchema): any => {
+    get(this: KeyValueDB, k: keyof KeyValueSchema): any {
       return keyValueDB[k];
     },
-    save: async () => {
+    async save(this: KeyValueDB) {
       try {
         await saveToFile(dbFileName, keyValueDB);
       } catch (e) {
@@ -59,11 +89,13 @@ export default function instance(flags: AppFlags) {
         console.info(`========\nDB DUMP DONE\n`);
       }
     },
-    load: async () => {
+    async load(this: KeyValueDB): Promise<KeyValueSchema> {
       try {
         const response = await fetchFile(dbFileName);
-        console.log('AAAAAABBBBB', response);
-        return JSON.parse(response || '{}');
+        const parsed = JSON.parse(response || '{}');
+        keyValueDB.appEpoch = parsed.appEpoch;
+        keyValueDB.users = parsed.users;
+        return keyValueDB;
       } catch (e) {
         console.error(`Cannot load DB from file "${dbFileName}", error:`, e);
         throw new Error('Cannot load DB from file.');
