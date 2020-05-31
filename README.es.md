@@ -23,7 +23,13 @@ npm install
 ```
 
 ## Ejecución
-Es necesario unir el bot al Discord donde funcionará, para esto, se debe pedir a un administrador que acepte la solicitud del bot para ingresar. Esto se hace compartiendo con dicho administrador el siguiente link:
+Es necesario unir el bot a la sala de Discord donde funcionará, para esto, se debe pedir a un administrador que acepte la solicitud del bot para ingresar.
+
+Antes de todo, es necesario que el bot que creamos sea "Público", de otra manera, nadie podrá unirlo a su sala de Discord (los bots privados solo los puede unir su creador y solamente a aquellas salas de las que sea dueño).
+
+![Estableciendo el bot como Público](docs/public-bot.png?raw=true "Estableciendo el bot como Público")
+
+Luego se debe compartir este link con el administrador de la sala en la cual queremos que el bot se una:
 
 ```
 https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID_HERE&scope=bot&permissions=268435456
@@ -33,12 +39,12 @@ El `CLIENT_ID` fue generado durante la creación de la app. El número utilizado
 
 La lista de permisos está disponible en la página de administración del bot:
 
-![Permisos en Discord](docs/permissions.jpg?raw=true "Permisos en Discord")
+![Permisos en Discord](docs/permissions.png?raw=true "Permisos en Discord")
 
 Usando el token generado durante la creación del bot, solo es necesario ejecutar.
 
 ```
-LEVIN_TOKEN=<bot-token> UPGRADES_ENABLED=true npm start
+LEVIN_TOKEN=<bot-token> UPGRADES_ENABLED=true AUTOMATIC_FIRST_LEVEL=true npm start
 ```
 
 Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin se conectó a Discord.
@@ -46,35 +52,25 @@ Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin
 ## Configuración de la sala de Discord
 En la Configuración de la sala, es necesario asegurarse de que el bot tenga la mayor autoridad posible en materia de roles. **Y sobre todo, es importante que el bot este por encima de los roles que pretende asignar.**
 
-Por ejemplo, esta configuración no funcionará, dado que `[Levin Bot]` no va a poder remover o asignar los roles NVL1, NVL2, NVL3.
+Por ejemplo, esta configuración no funcionará, dado que `[Test Levin App]` no va a poder remover o asignar los roles NVL1, NVL2, NVL3.
 
-```
-NVL1
-NVL2
-NVL3
-[Levin Bot]
-Coffee Maker
-Snacks Provider
-Gamers
-Developers
-```
+![Mala configuración de roles](docs/wrong-setup.jpg?raw=true "Mala configuración de roles")
 
 Es necesario que la configuración luzca similar a esto:
 
-```
-[Levin Bot]
-NVL1
-NVL2
-NVL3
-Coffee Maker
-Snacks Provider
-Gamers
-Developers
-```
+![Configuración correcta de roles](docs/correct-setup.jpg?raw=true "Configuración correcta de roles")
+
+Además, es indispensable que el bot tenga acceso de lectura a la mayor cantidad de canales posibles. No es necesario que tenga acceso en todos, pero la subida de nivel automatica se hace sobre la base de los mensajes que el bot pueda leer de los usuarios. Si un usuario es muy activo sólo en un canal determinado y el bot no puede leer los mensajes allí, eventualmente el bot bajará de nivel a este miembro.
+
+Algo así deberia lucir la configuración de cualquier canal al que se quiera el Levin tenga accesso:
+![Configuración correcta de un canal](docs/channel-config.png?raw=true "Configuración correcta de un canal")
 
 ## Flags de configuración
 * `LEVIN_TOKEN=<id>`: Es el token generado durante la creación del bot, sin el mismo es imposible conectarse al servicio de Discord. Es equivalente a un usuario y un password a la vez, no debe subirse a ningún repositorio y se le debe dar el mismo tratamiento que se le da a una contraseña de cualquier otro servicio.
+
 * `UPGRADES_ENABLED`: Si no está definida (o su valor es algo distinto a `true`) los usuarios no van a subir de nivel. Se puede utilizar para deshabilitar temporalmente esta funcionalidad por cualquier motivo. Por defecto, los usuarios **no suben de nivel**, es necesario habilitar explicitamente esta configuración usando `UPGRADES_ENABLED=true`.
+
+* `AUTOMATIC_FIRST_LEVEL`: Si no está definida (o su valor es algo distinto a `true`), el bot ignorará por completo a los usuarios que no posean al menos uno de los niveles pre-definidos. Si está activada, los usuarios que no posean ninguno de los niveles pre-definidos obtendrán automaticamente el primer nivel. Es útil deshabilitar esta funcionalidad cuando se desea limitar el acceso de nuevos miembros de manera que de no obtengan ningún nivel con el solo hecho de ingresar a la sala. Se le deberá asignar un rol de nivel manualmente a dicho usuario (o via cualquier otro bot o integración automática que esté disponible en la sala).
 
 ## Deployment
 Cualquier servidor que pueda ejecutar aplicaciones NodeJS puede correr perfectamente Levin. Con el mismo comando que se utiliza localmente, ya que la app no requiere ningun paso de building.
