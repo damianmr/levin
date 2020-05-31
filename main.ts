@@ -3,21 +3,6 @@ import bot from './src/bot';
 
 export type AppFlags = {
   /**
-   * Enables automatic leveling. If disabled, users won't level up,
-   * no matter how long they've been in the room/guild.
-   */
-  upgradesEnabled: boolean;
-
-  /**
-   * Users who have no level role at all will get the
-   * first level assigned automatically if this feature
-   * is enabled. Otherwise, you'll have to manually
-   * assign a level to your users before Levin can perform
-   * any leveling on them.
-   */
-  automaticFirstLevel: boolean;
-
-  /**
    * GitHub token for a user with full access to any repository
    * where the database files can be stored.
    */
@@ -87,8 +72,6 @@ async function main() {
   }
 
   const flags: AppFlags = {
-    upgradesEnabled: process.env.UPGRADES_ENABLED === 'true',
-    automaticFirstLevel: process.env.AUTOMATIC_FIRST_LEVEL === 'true',
     env,
     githubToken,
     dbRepository,
