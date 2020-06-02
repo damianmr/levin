@@ -82,14 +82,6 @@ export async function levelDown(member: GuildMember, logger: Logger, flags: AppF
     logger,
     `Usuario "${member.displayName}" (id: ${member.id}) fue bajado de nivel a ${rolesInfo.prevLevelRole.name}.`
   );
-
-  try {
-    await member.send(
-      `Debido a tu inactividad en ${member.guild.name}, bajaste de nivel y ahora sos ${rolesInfo.prevLevelRole.name} 😬`
-    );
-  } catch (e) {
-    logger.error(`Cannot send message to ${member.displayName}.`, e);
-  }
 }
 
 async function replaceMemberRole(
