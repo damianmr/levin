@@ -102,7 +102,7 @@ Este repositorio en particular ofrece soporte para deployar en Heroku. Para util
 * Idem: https://github.com/onepiecehung/discordjs-logger
 * Documentación general de DiscordJS (API usada en la comunicación con Discord): https://discordjs.guide/#before-you-begin
 * DiscordJS API: https://discord.js.org/#/docs/main/stable/general/welcome
-* Octokit (GitHub API): https://octokit.github.io/rest.js/v17
+* Octokit (GitHub API): https://octokit.github.io/rest.js/v18
 * Guía General de TypeScript: https://www.typescriptlang.org/docs/home.html
 * Referencia de comandos CLI de Heroku: https://devcenter.heroku.com/articles/heroku-cli-commands
 * Dyno Management en Heroku: https://devcenter.heroku.com/articles/dynos#cli-commands-for-dyno-management
