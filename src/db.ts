@@ -10,7 +10,6 @@ export type UserRecord = {
   lastMessage: number | null;
   lastDowngrade: number | null;
   userName: string;
-  userId: string;
 };
 
 export const userKey = (member: GuildMember) => `user-${member.guild.id}-${member.id}`;
@@ -50,8 +49,7 @@ export default function instance(flags: AppFlags): KeyValueDB {
         userKey: userKey(member),
         guildID: member.guild.id,
         memberID: member.id,
-        userName: member.user.username,
-        userId: member.user.id,
+        userName: escape(member.user.username),
         periodStart: null,
         lastMessage: null,
         lastDowngrade: null

@@ -94,6 +94,7 @@ async function main() {
     });
   } catch (e) {
     console.error('Cannot start Levin, error:', e);
+    process.exit(1);
   }
 }
 

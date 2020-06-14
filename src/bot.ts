@@ -20,7 +20,7 @@ const TIME_BETWEEN_DOWNGRADES: number = TIME_WITHOUT_MESSAGES;
 const TIME_BETWEEN_UPGRADES: number = 180; // valor de prod es 180 (days)
 
 const MINUTE_INTERVALS_MULTIPLIER = 60 * 1000;
-const LEVELING_CHECK_INTERVAL = 600; /* In minutes */
+const LEVELING_CHECK_INTERVAL = 60; /* In minutes */
 
 function timePassed({
   between: [from, to],
@@ -94,18 +94,23 @@ async function bot(flags: AppFlags): Promise<Bot> {
           const memberLogger = loggerInstance();
           const memberLog = memberLogger.log;
           const member = guildMembers[memberKey(trackedUser)];
-          memberLog(`\n\nRunning level checks for member "${trackedUser.userName}"`, trackedUser);
+          memberLog(
+            `\n\nRunning level checks for member "${unescape(trackedUser.userName)}"`,
+            trackedUser
+          );
           if (!member) {
             // No esta mas en la sala
             memberLog(
-              `Member "${trackedUser.userName}" (ID: ${trackedUser.memberID}) isn't part of the guild anymore. Removing...`,
+              `Member "${unescape(trackedUser.userName)}" (ID: ${
+                trackedUser.memberID
+              }) isn't part of the guild anymore. Removing...`,
               trackedUser
             );
             db.removeUser(trackedUser);
             return;
           } else if (member.user.bot || member.hasPermission('ADMINISTRATOR')) {
             memberLog(
-              `Member "${trackedUser.userName}" (ID: ${trackedUser.memberID}) is a bot or an admin. Nothing to do.`
+              `Member "${member.displayName}" (ID: ${member.id}) is a bot or an admin. Nothing to do.`
             );
             return;
           }
