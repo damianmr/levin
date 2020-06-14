@@ -21,7 +21,7 @@ Nunca se debe subir el token a ningún archivo del repositorio y además debe pe
 ### Persistencia de la base de datos
 
 Levin utiliza una base de datos key-value super básica que se persiste en JSON. Por limitaciones de hardware y costos, la persistencia de esta base de datos se realiza a un archivo en git utilizando el [API oficial de GitHub con Octokit](https://octokit.github.io/rest.js/v17#usage). Por lo tanto, para utilizar esta API necesitaremos dos cosas:
-- un repositorio nuevo y, en lo posible, dedicado a este fin exclusivamente, pero no es necesario. Dicho repositorio, debe contener tres archivos: `dev-db.json`, `stage-db.json`, `prod-db.json`. Se puede obtener un ejemplo de estos archivos en [dev-db.json](docs/dev-db.json.example?raw=true).
+- un repositorio nuevo y, en lo posible, dedicado a este fin exclusivamente, pero no es necesario. Dicho repositorio, debe contener tres archivos: `dev-db.json`, `stage-db.json`, `prod-db.json`. Se puede obtener un ejemplo de estos archivos en [dev-db.json.example](docs/dev-db.json.example?raw=true).
 
 ![Ejemplo de repositorio](docs/repoConfig.png?raw=true "Ejemplo de repositorio")
 
@@ -67,7 +67,7 @@ Es necesario que la configuración luzca similar a esto:
 ### Permisos de lectura
 Además, es indispensable que el bot tenga acceso de lectura a la mayor cantidad de canales posibles. No es necesario que tenga acceso en todos, pero la subida de nivel automatica se hace sobre la base de los mensajes que el bot pueda leer de los usuarios. Si un usuario es muy activo sólo en un canal determinado y el bot no puede leer los mensajes allí, eventualmente el bot bajará de nivel a este miembro.
 
-Algo así deberia lucir la configuración de cualquier canal al que se quiera el Levin tenga accesso:
+Algo así deberia lucir la configuración de cualquier canal al que se quiera el Levin tenga acceso:
 ![Configuración correcta de un canal](docs/exampleChannel.png?raw=true "Configuración correcta de un canal")
 
 ### Canal donde publicar los leveleos
