@@ -14,13 +14,13 @@ export type Bot = {
 
 type TimeUnit = 'minutes' | 'hours' | 'days' | 'months';
 
-const TIME_UNIT: TimeUnit = 'hours';
-const TIME_WITHOUT_MESSAGES: number = 18; // valor de prod es 30 (days)
+const TIME_UNIT: TimeUnit = 'days';
+const TIME_WITHOUT_MESSAGES: number = 30; // valor de prod es 30 (days)
 const TIME_BETWEEN_DOWNGRADES: number = TIME_WITHOUT_MESSAGES;
-const TIME_BETWEEN_UPGRADES: number = 24; // valor de prod es 180 (days)
+const TIME_BETWEEN_UPGRADES: number = 180; // valor de prod es 180 (days)
 
 const MINUTE_INTERVALS_MULTIPLIER = 60 * 1000;
-const LEVELING_CHECK_INTERVAL = 5; /* In minutes */
+const LEVELING_CHECK_INTERVAL = 60; /* In minutes */
 
 function timePassed({
   between: [from, to],
@@ -140,7 +140,7 @@ async function bot(flags: AppFlags): Promise<Bot> {
           if (noMessagesSinceAppEpochTolerance || lastMessageWasLongAgo) {
             if (Level.ONE === rolesInfo.highestCurrentLevelRole.name) {
               memberLog(
-                `Member "${member.displayName}" (ID: ${member.id}) is level 1 and hasn't posted anything during this period. Restarting they periodStart property.`,
+                `Member "${member.displayName}" (ID: ${member.id}) is level 1 and hasn't posted anything during this period. Restarting their periodStart property.`,
                 trackedUser
               );
               db.setUser(member, { periodStart: Date.now() });
