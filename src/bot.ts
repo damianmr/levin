@@ -20,7 +20,7 @@ const TIME_BETWEEN_DOWNGRADES: number = TIME_WITHOUT_MESSAGES;
 const TIME_BETWEEN_UPGRADES: number = 180; // valor de prod es 180 (days)
 
 const MINUTE_INTERVALS_MULTIPLIER = 60 * 1000;
-const LEVELING_CHECK_INTERVAL = 10; /* In minutes */
+const LEVELING_CHECK_INTERVAL = 2; /* In minutes */
 
 function timePassed({
   between: [from, to],
