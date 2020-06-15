@@ -3,7 +3,6 @@ import gitHubLogin, { saveToFile, fetchFile } from './github';
 import { AppFlags } from '../main';
 
 export type UserRecord = {
-  userKey: string;
   guildID: string;
   memberID: string;
   periodStart: number | null;
@@ -46,7 +45,6 @@ export default function instance(flags: AppFlags): KeyValueDB {
   return {
     setUser(this: KeyValueDB, member: GuildMember, updatedRecord: Partial<UserRecord>) {
       const newRecord: UserRecord = {
-        userKey: userKey(member),
         guildID: member.guild.id,
         memberID: member.id,
         userName: escape(member.user.username),
