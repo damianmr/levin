@@ -91,6 +91,7 @@ Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin
 * `GITHUB_TOKEN`: token generado para algun usuario que tenga acceso al repositorio donde se persiste la base de datos ([ver Persitencia](#persistencia-de-la-base-de-datos)). Esto es equivalente a una contraseña, no se debe compartir con absolutamente nadie.
 * `ENV`: los posibles valores son `dev`, `stage`, `prod`. Sirve para poder utilizar diferentes archivos de bases de datos durante las pruebas. Por ejemplo, localmente podría ser `dev`, en una sala de pruebas, con usuarios de pruebas, `stage`, y finalmente la base de datos donde hay usuarios reales `prod` ([ver Persitencia](#persistencia-de-la-base-de-datos)).
 * `UPDATES_CHANNEL`: es el nombre del canal donde Levin publicará las subidas/bajadas de nivel. Es el nombre tal cual esté escrito en Discord ([ver Canal de Leveleos](#canal-donde-publicar-los-leveleos))
+* `LEVEL_CHECK_INTERVAL_IN_MINUTES`: cada cuantos minutos se ejecuta el chequeo de niveles. Con una vez al dia es suficiente, pero para testear, se puede utilizar valores bajos.
 
 ## Deployment
 Cualquier servidor que pueda ejecutar aplicaciones NodeJS puede correr perfectamente Levin. Con el mismo comando que se utiliza localmente, ya que la app no requiere ningun paso de building.
