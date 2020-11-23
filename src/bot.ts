@@ -324,7 +324,7 @@ async function bot(flags: AppFlags): Promise<Bot> {
         userList.push(' ');
       });
       const userListAsString = userList.join('\n');
-      console.log('Guilds & Members:\n');
+      log('Guilds & Members:\n');
       log(
         `User "${message.author.username}" (id: ${message.author.id}) requested the list of users in his/her guilds. Sending an attachment with the following contents:`
       );
@@ -345,12 +345,38 @@ async function bot(flags: AppFlags): Promise<Bot> {
           'No se pudo enviar la lista de usuarios. Revisar el log de errores.'
         );
       }
+    },
+
+    // Remueve el role "NVL0" de los usuarios al
+    // poner su primer mensaje. NVL0 es un role
+    // asignado automaticamente al aceptar las reglas.
+    async function removeZeroLevelRole(message) {
+      const { info } = loggerInstance();
+      if (
+        message.channel?.type !== 'text' ||
+        message.author.bot ||
+        !message.member ||
+        !message.guild
+      ) {
+        return;
+      }
+
+      const member = message.member;
+      const zeroLevelRole = member.roles.cache.find((role) => role.name === Level.ZERO);
+      if (!zeroLevelRole) {
+        return;
+      }
+      const newMemberRoles = member.roles.cache.clone();
+      newMemberRoles.delete(zeroLevelRole.id);
+      info(
+        `[removeZeroLevelRole] Role "${Level.ZERO}" removed in member: ${member.displayName} (ID: ${member.id})`
+      );
+      await member.roles.set(newMemberRoles);
     }
   ];
 
   // ==================================================================
   client.on('message', async (message) => {
-    // console.log('Message!', message);
     Promise.all(MessageHandlers.map(async (f) => f(message)));
   });
 

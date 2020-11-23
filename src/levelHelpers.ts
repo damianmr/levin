@@ -3,7 +3,7 @@ import maxBy from 'lodash/maxBy';
 import { Logger } from './logger';
 import { AppFlags } from '../main';
 
-export const Level = { ONE: 'NVL1', TWO: 'NVL2', THREE: 'NVL3' };
+export const Level = { ZERO: 'NVL0', ONE: 'NVL1', TWO: 'NVL2', THREE: 'NVL3' };
 export const USER_LEVEL_ROLE_NAMES: string[] = [Level.ONE, Level.TWO, Level.THREE];
 
 export async function levelUp(member: GuildMember, logger: Logger, flags: AppFlags) {

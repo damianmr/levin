@@ -78,7 +78,6 @@ async function main() {
   }
 
   if (!levelCheckInterval || levelCheckInterval <= 0 || levelCheckInterval > MINUTES_IN_ONE_DAY) {
-    console.log('AAA', levelCheckInterval);
     console.error(
       `Falta env var "LEVEL_CHECK_INTERVAL_IN_MINUTES" que debe ser menor o igual a ${MINUTES_IN_ONE_DAY}`
     );
