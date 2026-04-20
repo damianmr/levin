@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Levin Bot",
   "main": "src/main.js",
-  "repository": "git@github.com:inversionistas/levin.git",
+  "repository": "git@github.com:damianmr/levin.git",
   "scripts": {
     "start": "ts-node main.ts"
   },

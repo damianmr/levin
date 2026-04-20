@@ -16,7 +16,7 @@ export default function login(config: GitHubAPIConfig) {
   api = new Octokit({
     auth: config.githubToken,
     userAgent: 'LevinBot',
-    timeZone: 'America/Argentina/Buenos_Aires',
+    timeZone: 'Europe/London',
     log: {
       debug: console.log,
       info: console.log,

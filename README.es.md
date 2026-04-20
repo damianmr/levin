@@ -108,8 +108,6 @@ Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin
 
 Cualquier servidor que pueda ejecutar aplicaciones Node.js puede correr perfectamente Levin. Con el mismo comando que se utiliza localmente alcanza, ya que la app no requiere ningún paso de build.
 
-El repositorio ya no incluye un `Procfile` ni configuración específica para una plataforma concreta. Configurá tu process manager o tu proveedor de hosting para ejecutar `npm start` con las variables de entorno necesarias.
-
 ## Recursos
 
 - Lista de eventos disponibles: https://gist.github.com/koad/316b265a91d933fd1b62dddfcc3ff584

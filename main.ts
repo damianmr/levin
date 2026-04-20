@@ -50,7 +50,7 @@ async function main() {
   const levelCheckInterval = parseInt(process.env.LEVEL_CHECK_INTERVAL_IN_MINUTES || '0', 10);
   if (!botToken || isEmpty(botToken)) {
     console.error(
-      'Se necesita un bot token para iniciar Levin, se puede obtener uno aquí: https://discordapp.com/developers/applications'
+      'A bot token is required to start Levin. You can get one here: https://discordapp.com/developers/applications'
     );
     return;
   }
@@ -60,26 +60,26 @@ async function main() {
     case 'prod':
       break;
     default:
-      console.error(`Entorno invalido "${env}`);
+      console.error(`Invalid environment "${env}"`);
       return;
   }
   if (!githubToken || isEmpty(githubToken) || !dbRepository || isEmpty(dbRepository)) {
     console.error(
-      'Faltan env vars "GITHUB_TOKEN" y "DB_REPOSITORY" (en formato: "myUser/myProject")'
+      'Missing env vars "GITHUB_TOKEN" and "DB_REPOSITORY" (format: "myUser/myProject")'
     );
     return;
   }
 
   if (!dbBackupInterval || dbBackupInterval <= 0 || dbBackupInterval > MINUTES_IN_ONE_DAY) {
     console.error(
-      `Falta env var "DB_BACKUP_INTERVAL_IN_MINUTES" que debe ser menor o igual ${MINUTES_IN_ONE_DAY}`
+      `Missing env var "DB_BACKUP_INTERVAL_IN_MINUTES". It must be less than or equal to ${MINUTES_IN_ONE_DAY}`
     );
     return;
   }
 
   if (!levelCheckInterval || levelCheckInterval <= 0 || levelCheckInterval > MINUTES_IN_ONE_DAY) {
     console.error(
-      `Falta env var "LEVEL_CHECK_INTERVAL_IN_MINUTES" que debe ser menor o igual a ${MINUTES_IN_ONE_DAY}`
+      `Missing env var "LEVEL_CHECK_INTERVAL_IN_MINUTES". It must be less than or equal to ${MINUTES_IN_ONE_DAY}`
     );
     return;
   }

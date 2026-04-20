@@ -15,9 +15,9 @@ export type Bot = {
 type TimeUnit = 'minutes' | 'hours' | 'days' | 'months';
 
 const TIME_UNIT: TimeUnit = 'days';
-const TIME_WITHOUT_MESSAGES: number = 30; // valor de prod es 30 (days)
+const TIME_WITHOUT_MESSAGES: number = 30; // Production value is 30 days.
 const TIME_BETWEEN_DOWNGRADES: number = TIME_WITHOUT_MESSAGES;
-const TIME_BETWEEN_UPGRADES: number = 180; // valor de prod es 180 (days)
+const TIME_BETWEEN_UPGRADES: number = 180; // Production value is 180 days.
 
 const MINUTE_INTERVALS_MULTIPLIER = 60 * 1000;
 
@@ -70,10 +70,9 @@ async function bot(flags: AppFlags): Promise<Bot> {
       client.guilds.cache.map(async (g) => {
         log(`[levelingCheck] Running check on guild "${g.name}" (id: ${g.id})...`);
         await g.members.fetch();
-        // Armamos un diccionario con miembros de la sala para verificar
-        // luego si dejaron la sala y
-        // 1- evitar el chequeo para levelUp / levelDown.
-        // 2- removerlos de la db.
+        // Build a guild member lookup so we can later verify whether they left.
+        // 1. Skip levelUp / levelDown checks for missing members.
+        // 2. Remove them from the database.
         const guildMembers = g.members.cache.reduce<{
           [id: string]: GuildMember;
         }>((list, m) => {
@@ -98,7 +97,7 @@ async function bot(flags: AppFlags): Promise<Bot> {
             trackedUser
           );
           if (!member) {
-            // No esta mas en la sala
+            // The member is no longer in the guild.
             memberLog(
               `Member "${unescape(trackedUser.userName)}" (ID: ${
                 trackedUser.memberID
@@ -193,7 +192,7 @@ async function bot(flags: AppFlags): Promise<Bot> {
         });
       });
 
-      levelingCheck(); // Schedulea el proximo chequeo.
+      levelingCheck(); // Schedule the next check.
     }, flags.levelCheckInterval * MINUTE_INTERVALS_MULTIPLIER);
   })();
 
@@ -217,9 +216,8 @@ async function bot(flags: AppFlags): Promise<Bot> {
     client.guilds.cache.map(async (g) => {
       await g.members.fetch();
       g.members.cache.forEach((m) => {
-        // 'on Ready': verificamos que todos los miembros de la sala
-        // tengan 'periodStart' setteado, sino, se comienza a contar desde el
-        // momento en que se unieron a la sala.
+        // On ready, make sure every guild member has periodStart set.
+        // Otherwise, start counting from the moment they joined the guild.
         if (!db.getUser(m) && !m.user.bot) {
           if (m.joinedTimestamp) {
             info(
@@ -291,7 +289,7 @@ async function bot(flags: AppFlags): Promise<Bot> {
       return;
     },
     // -------
-    // Handles message 'users' from guild admins.
+    // Handle the 'users' message from guild admins.
     // -------
     async function usersReport(message) {
       const { log, stamp, error } = loggerInstance();
@@ -347,9 +345,8 @@ async function bot(flags: AppFlags): Promise<Bot> {
       }
     },
 
-    // Remueve el role "NVL0" de los usuarios al
-    // poner su primer mensaje. NVL0 es un role
-    // asignado automaticamente al aceptar las reglas.
+    // Remove the "NVL0" role when users post their first message.
+    // NVL0 is assigned automatically when they accept the rules.
     async function removeZeroLevelRole(message) {
       const { info } = loggerInstance();
       if (
