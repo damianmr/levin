@@ -10,7 +10,7 @@
   "author": "Damian M.R. (@damianmr)",
   "license": "ISC",
   "dependencies": {
-    "@octokit/rest": "17.9.1",
+    "@octokit/rest": "22.0.1",
     "@types/atob": "2.1.2",
     "@types/btoa": "1.2.3",
     "@types/lodash": "4.14.149",
