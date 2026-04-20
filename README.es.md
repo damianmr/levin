@@ -89,20 +89,24 @@ Se debe crear un canal donde Levin pueda publicar las actualizaciones de nivel d
 ## Iniciando el bot
 
 ```bash
-LEVIN_TOKEN=<bot-token> DB_BACKUP_INTERVAL_IN_MINUTES=2 DB_REPOSITORY=<db_repository> ENV=<dev/prod/stage> GITHUB_TOKEN=<githubToken> UPDATES_CHANNEL=<nombre-de-algun-canal> npm start
+LEVIN_TOKEN=<bot-token> DB_BACKUP_INTERVAL_IN_MINUTES=2 LEVEL_CHECK_INTERVAL_IN_MINUTES=1440 DB_REPOSITORY=<db_repository> ENV=<dev|stage|prod> GITHUB_TOKEN=<github-token> UPDATES_CHANNEL=<nombre-del-canal> npm start
 ```
 
 Si todo está correctamente instalado, aparecerá un mensaje indicando que Levin se conectó a Discord.
 
-## Flags de configuración
+## Variables de entorno
 
-- `LEVIN_TOKEN=<bot-token>`: es el token generado durante la creación del bot. Sin el mismo es imposible conectarse al servicio de Discord. Es equivalente a un usuario y una contraseña a la vez, no debe subirse a ningún repositorio y se le debe dar el mismo tratamiento que se le da a una contraseña de cualquier otro servicio ([ver Creación del bot](#creación-del-bot-en-discord)).
-- `DB_BACKUP_INTERVAL_IN_MINUTES`: cada cuánto se persiste en git el archivo con la base de datos. Esto genera un commit en el archivo, haya o no cambios.
-- `DB_REPOSITORY`: nombre del repositorio donde se encuentran los archivos de la base de datos ([ver Persistencia](#persistencia-de-la-base-de-datos)). Ejemplo: si la URL del repositorio es `http://github.com/my-bot/db-files`, el nombre del repositorio es `my-bot/db-files`.
-- `GITHUB_TOKEN`: token generado para algún usuario que tenga acceso al repositorio donde se persiste la base de datos ([ver Persistencia](#persistencia-de-la-base-de-datos)). Esto es equivalente a una contraseña; no se debe compartir con absolutamente nadie.
-- `ENV`: los posibles valores son `dev`, `stage`, `prod`. Sirve para poder utilizar diferentes archivos de base de datos durante las pruebas. Por ejemplo, localmente podría ser `dev`, en un servidor de pruebas `stage`, y finalmente la base de datos donde hay usuarios reales `prod` ([ver Persistencia](#persistencia-de-la-base-de-datos)).
-- `UPDATES_CHANNEL`: es el nombre del canal donde Levin publicará las subidas y bajadas de nivel. Es el nombre tal cual esté escrito en Discord ([ver Canal de leveleos](#canal-donde-publicar-los-leveleos)).
-- `LEVEL_CHECK_INTERVAL_IN_MINUTES`: cada cuántos minutos se ejecuta el chequeo de niveles. Con una vez al día es suficiente, pero para testear se pueden utilizar valores bajos.
+| Variable | Requerida | Descripción | Ejemplo / Notas |
+| --- | --- | --- | --- |
+| `LEVIN_TOKEN` | Sí | Token del bot de Discord usado para iniciar sesión. | Se obtiene desde el portal de desarrolladores de Discord. Debe mantenerse secreto. |
+| `GITHUB_TOKEN` | Sí | Token de GitHub de un usuario con acceso al repositorio que guarda los archivos de la base de datos. | Debe tratarse como una contraseña. |
+| `DB_REPOSITORY` | Sí | Repositorio donde viven `dev-db.json`, `stage-db.json` y `prod-db.json`. | Formato: `owner/repo` |
+| `ENV` | Sí | Define qué archivo de base de datos usa Levin. | Valores válidos: `dev`, `stage`, `prod` |
+| `DB_BACKUP_INTERVAL_IN_MINUTES` | Sí | Intervalo usado para persistir la base de datos de nuevo en GitHub. | Debe ser mayor a `0` y menor o igual a `1440` |
+| `LEVEL_CHECK_INTERVAL_IN_MINUTES` | Sí | Intervalo usado para ejecutar los chequeos automáticos de nivel. | Debe ser mayor a `0` y menor o igual a `1440` |
+| `UPDATES_CHANNEL` | No | Nombre del canal donde Levin publica los cambios de nivel. | Debe coincidir exactamente con el nombre del canal en Discord |
+
+Estas son todas las variables de entorno de runtime que actualmente lee el código de la aplicación.
 
 ## Deployment
 

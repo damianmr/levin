@@ -89,20 +89,24 @@ You should create a channel where Levin can post user level updates. Levin uses 
 ## Starting the bot
 
 ```bash
-LEVIN_TOKEN=<bot-token> DB_BACKUP_INTERVAL_IN_MINUTES=2 DB_REPOSITORY=<db_repository> ENV=<dev/prod/stage> GITHUB_TOKEN=<githubToken> UPDATES_CHANNEL=<channel-name> npm start
+LEVIN_TOKEN=<bot-token> DB_BACKUP_INTERVAL_IN_MINUTES=2 LEVEL_CHECK_INTERVAL_IN_MINUTES=1440 DB_REPOSITORY=<db_repository> ENV=<dev|stage|prod> GITHUB_TOKEN=<github-token> UPDATES_CHANNEL=<channel-name> npm start
 ```
 
 If everything is installed correctly, you will see a message indicating that Levin connected to Discord.
 
-## Configuration flags
+## Environment variables
 
-- `LEVIN_TOKEN=<bot-token>`: the token generated during bot creation. Without it, connecting to Discord is impossible. It acts like both a username and password, must never be committed to any repository, and should be treated like the password for any other service ([see Bot creation](#creating-the-discord-bot)).
-- `DB_BACKUP_INTERVAL_IN_MINUTES`: how often the database file is persisted to git. This creates a commit for the file whether there are changes or not.
-- `DB_REPOSITORY`: the name of the repository where the database files live ([see Database persistence](#database-persistence)). Example: if the repository URL is `http://github.com/my-bot/db-files`, then the repository name is `my-bot/db-files`.
-- `GITHUB_TOKEN`: a token for a user with access to the repository where the database is persisted ([see Database persistence](#database-persistence)). This is effectively a password and must never be shared.
-- `ENV`: valid values are `dev`, `stage`, and `prod`. This lets you use different database files for testing. For example, locally you could use `dev`, in a staging server with test users `stage`, and for real users `prod` ([see Database persistence](#database-persistence)).
-- `UPDATES_CHANNEL`: the name of the channel where Levin will post level-up and level-down updates. The name must match the channel name exactly as written in Discord ([see Channel for level updates](#channel-for-level-updates)).
-- `LEVEL_CHECK_INTERVAL_IN_MINUTES`: how often level checks run. Once a day is enough, but for testing you can use lower values.
+| Variable | Required | Description | Example / Notes |
+| --- | --- | --- | --- |
+| `LEVIN_TOKEN` | Yes | Discord bot token used to log in. | Get it from the Discord developer portal. Keep it secret. |
+| `GITHUB_TOKEN` | Yes | GitHub token for a user with access to the repository that stores the DB files. | Treated like a password. |
+| `DB_REPOSITORY` | Yes | Repository where `dev-db.json`, `stage-db.json`, and `prod-db.json` live. | Format: `owner/repo` |
+| `ENV` | Yes | Selects which DB file Levin will use. | Valid values: `dev`, `stage`, `prod` |
+| `DB_BACKUP_INTERVAL_IN_MINUTES` | Yes | Interval used to persist the DB back to GitHub. | Must be greater than `0` and less than or equal to `1440` |
+| `LEVEL_CHECK_INTERVAL_IN_MINUTES` | Yes | Interval used to run automatic level checks. | Must be greater than `0` and less than or equal to `1440` |
+| `UPDATES_CHANNEL` | No | Channel name where Levin posts level changes. | Must match the Discord channel name exactly |
+
+These are the only runtime environment variables currently read by the application code.
 
 ## Deployment
 
