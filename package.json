@@ -3,18 +3,24 @@
   "version": "1.0.0",
   "description": "Levin Bot",
   "main": "src/main.js",
+  "repository": "git@github.com:inversionistas/levin.git",
   "scripts": {
     "start": "ts-node main.ts"
   },
   "author": "Damian M.R. (@damianmr)",
   "license": "ISC",
   "dependencies": {
+    "@octokit/rest": "^17.9.1",
+    "@types/atob": "^2.1.2",
+    "@types/btoa": "^1.2.3",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.9.2",
-    "discord.js": "^12.0.2",
-    "lodash": "^4.17.15",
-    "moment": "^2.24.0",
-    "ts-node": "^8.7.0",
-    "typescript": "^3.8.3"
+    "atob": "2.1.2",
+    "btoa": "^1.2.1",
+    "discord.js": "12.2.0",
+    "lodash": "4.17.15",
+    "moment": "2.24.0",
+    "ts-node": "8.7.0",
+    "typescript": "3.8.3"
   }
 }
